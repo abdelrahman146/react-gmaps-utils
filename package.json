@@ -1,10 +1,10 @@
 {
-  "name": "google-maps-react",
+  "name": "react-gmaps-utils",
   "version": "0.1.0",
   "description": "a wrapper for google maps",
   "author": "abdelrahman146",
   "license": "MIT",
-  "repository": "abdelrahman146/google-maps-react",
+  "repository": "abdelrahman146/react-gmaps-utils",
   "main": "./dist/index.js",
   "module": "./dist/index.module.js",
   "source": "src/index.ts",

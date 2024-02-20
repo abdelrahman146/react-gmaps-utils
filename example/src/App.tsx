@@ -5,7 +5,7 @@ import {
   Places,
   Map,
   useCurrentPosition
-} from 'google-maps-react'
+} from 'react-gmaps-utils'
 
 const defaultPosition = { lat: 25.276987, lng: 55.296249 }
 const App = () => {

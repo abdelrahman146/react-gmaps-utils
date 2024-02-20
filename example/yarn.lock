@@ -1143,7 +1143,7 @@ globby@^11.1.0:
     merge2 "^1.4.1"
     slash "^3.0.0"
 
-"google-maps-react@link:..":
+"react-gmaps-utils@link:..":
   version "0.0.0"
   uid ""
 

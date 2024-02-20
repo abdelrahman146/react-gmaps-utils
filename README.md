@@ -1,13 +1,13 @@
-# google-maps-react
+# react-gmaps-utils
 
-google-maps-react is a React library that provides components and hooks for integrating Google Maps functionality into your React applications.
+react-gmaps-utils is a React library that provides components and hooks for integrating Google Maps functionality into your React applications.
 
 ## Installation
 
-You can install google-maps-react using npm:
+You can install react-gmaps-utils using npm:
 
 ```bash
-npm install google-maps-react
+npm install react-gmaps-utils
 ```
 
 ## Usage
@@ -18,7 +18,7 @@ The `GoogleMapsProvider` component is used to load the Google Maps script and pr
 
 
 ```jsx
-import { GoogleMapsProvider } from 'google-maps-react'
+import { GoogleMapsProvider } from 'react-gmaps-utils'
 
 function App() {
   return (
@@ -34,7 +34,7 @@ function App() {
 The `Map` component renders a Google Map and provides various options for customization.
 
 ```jsx
-import { Map } from 'google-maps-react'
+import { Map } from 'react-gmaps-utils'
 
 function MyMap() {
   return (
@@ -55,7 +55,7 @@ function MyMap() {
 The `Marker` component adds a marker to the map at a specified position.
 
 ```jsx
-import { Map } from 'google-maps-react'
+import { Map } from 'react-gmaps-utils'
 
 function MyMapWithMarker() {
   return (
@@ -76,7 +76,7 @@ function MyMapWithMarker() {
 The `Autocomplete` component provides an input field with autocomplete functionality for places.
 
 ```jsx
-import { Places } from 'google-maps-react'
+import { Places } from 'react-gmaps-utils'
 
 function MyAutocomplete() {
   return (
@@ -109,7 +109,7 @@ function MyAutocomplete() {
 The `ReverseGeocodeByLocation` component performs reverse geocoding based on a specified location.
 
 ```jsx
-import { ReverseGeocodeByLocation } from 'google-maps-react'
+import { ReverseGeocodeByLocation } from 'react-gmaps-utils'
 
 function MyReverseGeocoder() {
   return (
@@ -126,7 +126,7 @@ function MyReverseGeocoder() {
 The `MapEvent` component listens for events on the map and executes a callback function when the event is triggered.
 
 ```jsx
-import { MapEvent } from 'google-maps-react'
+import { MapEvent } from 'react-gmaps-utils'
 
 function MyMapEvent() {
   const handleMapClick = (map, event) => {
@@ -153,7 +153,7 @@ function MyMapEvent() {
 The `useCurrentPosition` hook retrieves the current position of the user.
 
 ```jsx
-import { useCurrentPosition } from 'google-maps-react'
+import { useCurrentPosition } from 'react-gmaps-utils'
 
 function MyComponent() {
   const { position, loading, error, getCurrentPosition } = useCurrentPosition()
