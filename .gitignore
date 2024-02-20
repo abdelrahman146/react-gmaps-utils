@@ -4,6 +4,8 @@
 # dependencies
 node_modules
 
+.vscode
+
 # builds
 build
 dist
@@ -20,3 +22,5 @@ dist
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+/code
