@@ -1,6 +1,12 @@
 # react-gmaps-utils
+[![npm package](https://img.shields.io/npm/v/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
+[![npm downloads](https://img.shields.io/npm/dt/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
+[![npm bundle size](https://img.shields.io/bundlephobia/min/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
 
 react-gmaps-utils is a React library that provides components and hooks for integrating Google Maps functionality into your React applications.
+
+
+
 
 ## Installation
 
