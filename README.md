@@ -16,6 +16,7 @@ npm install google-maps-react
 
 The `GoogleMapsProvider` component is used to load the Google Maps script and provide a context for other components to access the Google Maps API.
 
+
 ```jsx
 import { GoogleMapsProvider } from 'google-maps-react'
 
