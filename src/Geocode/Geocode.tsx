@@ -8,6 +8,7 @@ export function useGeocode() {
 }
 
 interface GeocodeProps {
+  onLoaded?: (geocode: google.maps.Geocoder) => void;
   children?: React.ReactNode;
 }
 
@@ -16,7 +17,7 @@ interface GeocodeProps {
  * @param children - The children components.
  * @returns The Geocode component.
  */
-export function Geocode({ children }: GeocodeProps): JSX.Element {
+export function Geocode({ children, onLoaded }: GeocodeProps): JSX.Element {
   const { scriptLoaded } = useGoogleMaps();
   const geocoderRef = useRef<google.maps.Geocoder | null>(null);
 
@@ -25,6 +26,12 @@ export function Geocode({ children }: GeocodeProps): JSX.Element {
       geocoderRef.current = new google.maps.Geocoder();
     }
   }, [scriptLoaded]);
+
+  useEffect(() => {
+    if (geocoderRef.current) {
+      onLoaded?.(geocoderRef.current);
+    }
+  } , [geocoderRef.current, onLoaded]);
 
   return <GeocodeContext.Provider value={{ geocode: geocoderRef.current }}>{children}</GeocodeContext.Provider>;
 }

@@ -16,6 +16,7 @@ export function useMap() {
 
 export interface MapProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'ref'> {
   options?: google.maps.MapOptions;
+  onLoaded?: (map: google.maps.Map) => void;
   children?: React.ReactNode;
 }
 
@@ -29,7 +30,7 @@ export interface MapProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 're
  * @param {...any} props.rest - Additional props to be spread onto the map container element.
  * @returns {JSX.Element} The rendered Map component.
  */
-export function Map({ options, children, ...rest }: MapProps) {
+export function Map({ options, children, onLoaded, ...rest }: MapProps) {
   const { scriptLoaded } = useGoogleMaps();
   const mapRef = useRef<google.maps.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -49,6 +50,12 @@ export function Map({ options, children, ...rest }: MapProps) {
     if (!scriptLoaded) return;
     mapRef.current = new google.maps.Map(mapContainerRef.current, options);
   }, [scriptLoaded, mapContainerRef.current]);
+
+  useEffect(() => {
+    if (mapRef.current && onLoaded) {
+      onLoaded(mapRef.current);
+    }
+  } , [mapRef.current, onLoaded]);
 
   return (
     <MapContext.Provider value={{ map: mapRef.current }}>

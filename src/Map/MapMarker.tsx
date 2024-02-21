@@ -3,6 +3,7 @@ import { useMap } from './Map';
 
 interface MapMarkerProps {
   position: google.maps.LatLngLiteral | null;
+  onLoaded?: (marker: google.maps.Marker) => void;
   options?: Omit<google.maps.MarkerOptions, 'position'>;
   children?: React.ReactNode;
 }
@@ -28,7 +29,7 @@ export function useMarker() {
  * @param children - The content to be rendered inside the marker.
  * @returns The rendered marker component.
  */
-export function MapMarker({ position, options, children }: MapMarkerProps): JSX.Element {
+export function MapMarker({ position, options, onLoaded, children }: MapMarkerProps): JSX.Element {
   const markerRef = useRef<google.maps.Marker | null>(null);
   const { map } = useMap();
 
@@ -41,6 +42,12 @@ export function MapMarker({ position, options, children }: MapMarkerProps): JSX.
       }
     }
   }, [map, position]);
+
+  useEffect(() => {
+    if (markerRef.current && onLoaded) {
+      onLoaded(markerRef.current);
+    }
+  } , [markerRef.current, onLoaded]);
 
   return <MapMarkerContext.Provider value={{ marker: markerRef.current }}>{children}</MapMarkerContext.Provider>;
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 
 import {
   GoogleMapsProvider,
@@ -11,7 +11,7 @@ const CustomInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
   ...rest
 }) => {
   return (
-    <div className='Helloo' style={{margin: 10}}>
+    <div className='Helloo' style={{ margin: 10 }}>
       <input {...rest} />
     </div>
   )
@@ -20,6 +20,7 @@ const CustomInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
 const defaultPosition = { lat: 25.276987, lng: 55.296249 }
 const App = () => {
   const [query, setQuery] = useState('')
+  const placesService = useRef<google.maps.places.PlacesService | null>(null)
   const { position: currentPosition } = useCurrentPosition({
     defaultPosition: defaultPosition
   })
@@ -29,12 +30,32 @@ const App = () => {
       zoom: 15
     }
   }, [currentPosition])
+  const handleClick = (
+    prediction: google.maps.places.AutocompletePrediction
+  ) => {
+    if (placesService.current) {
+      placesService.current.getDetails(
+        {
+          placeId: prediction.place_id
+        },
+        (place, status) => {
+          if (status === 'OK') {
+            console.log(place)
+          }
+        }
+      )
+    }
+  }
   return (
     <GoogleMapsProvider apiKey={import.meta.env.VITE_API_KEY}>
       <div>My App</div>
       <div className='container'>
         <div className='places-container'>
-          <Places>
+          <Places
+            onLoaded={(places) => {
+              placesService.current = places
+            }}
+          >
             <Places.Autocomplete
               as={CustomInput}
               value={query}
@@ -43,7 +64,7 @@ const App = () => {
               }
               options={{ types: ['(cities)'] }}
               className='input'
-              renderResult={(predictions, handleClick) => {
+              renderResult={(predictions) => {
                 return (
                   <div className='dropdown'>
                     {predictions.map((prediction) => (
@@ -57,9 +78,6 @@ const App = () => {
                     ))}
                   </div>
                 )
-              }}
-              onItemClick={(place) => {
-                console.log(place)
               }}
             />
           </Places>
