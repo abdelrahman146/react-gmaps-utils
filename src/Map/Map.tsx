@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useId } from 'react';
+import React, { memo, useEffect, useRef, useId } from 'react';
 import { useGoogleMaps } from '../GoogleMapsContext';
 
 /**
@@ -30,7 +30,7 @@ export interface MapProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 're
  * @param {...any} props.rest - Additional props to be spread onto the map container element.
  * @returns {JSX.Element} The rendered Map component.
  */
-export function Map({ options, children, onLoaded, ...rest }: MapProps) {
+export const Map = memo(({ options, children, onLoaded, ...rest }: MapProps) => {
   const { scriptLoaded } = useGoogleMaps();
   const mapRef = useRef<google.maps.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -63,4 +63,4 @@ export function Map({ options, children, onLoaded, ...rest }: MapProps) {
       {children}
     </MapContext.Provider>
   );
-}
+});

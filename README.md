@@ -83,12 +83,12 @@ function MyMapWithMarker() {
 The `Autocomplete` component provides an input field with autocomplete functionality for places.
 
 ```jsx
-import { Places } from 'react-gmaps-utils'
+import { Places, Autocomplete } from 'react-gmaps-utils'
 
 function MyAutocomplete() {
   return (
     <Places>
-      <Places.Autocomplete
+      <Autocomplete
         options={{
           types: ['geocode'],
           componentRestrictions: { country: 'us' }

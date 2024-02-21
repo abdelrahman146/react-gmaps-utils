@@ -3,20 +3,17 @@
  * 
  * @packageDocumentation
  */
-
-import { Autocomplete, useAutocomplete } from './Autocomplete';
+export * from './Autocomplete';
 import { Places as PlacesContainer, usePlaces } from './Places';
+import { FindPlaceByPlaceId } from './FindPlaceByPlaceId';
 
 /**
  * The `Places` module is a collection of components and hooks related to places.
  */
 export const Places = Object.assign(PlacesContainer, {
   /**
-   * The `Autocomplete` component provides an input field with autocomplete functionality for places.
-   */
-  Autocomplete: Object.assign(Autocomplete, { useAutocomplete }),
-  /**
    * The `usePlaces` hook provides functionality for fetching and managing places data.
    */
+  FindPlaceByPlaceId,
   usePlaces,
 });

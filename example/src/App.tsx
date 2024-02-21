@@ -4,7 +4,8 @@ import {
   GoogleMapsProvider,
   Places,
   Map,
-  useCurrentPosition
+  useCurrentPosition,
+  Autocomplete
 } from 'react-gmaps-utils'
 
 const CustomInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
@@ -19,8 +20,11 @@ const CustomInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
 
 const defaultPosition = { lat: 25.276987, lng: 55.296249 }
 const App = () => {
+  console.log("app  rendered");
   const [query, setQuery] = useState('')
   const placesService = useRef<google.maps.places.PlacesService | null>(null)
+  const autocompleteRef = useRef<{close: () => void}>(null)
+  const [placeId, setPlaceId] = useState<string | null>(null);
   const { position: currentPosition } = useCurrentPosition({
     defaultPosition: defaultPosition
   })
@@ -29,23 +33,8 @@ const App = () => {
       center: currentPosition || undefined,
       zoom: 15
     }
-  }, [currentPosition])
-  const handleClick = (
-    prediction: google.maps.places.AutocompletePrediction
-  ) => {
-    if (placesService.current) {
-      placesService.current.getDetails(
-        {
-          placeId: prediction.place_id
-        },
-        (place, status) => {
-          if (status === 'OK') {
-            console.log(place)
-          }
-        }
-      )
-    }
-  }
+  }, [currentPosition]);
+
   return (
     <GoogleMapsProvider apiKey={import.meta.env.VITE_API_KEY}>
       <div>My App</div>
@@ -56,8 +45,9 @@ const App = () => {
               placesService.current = places
             }}
           >
-            <Places.Autocomplete
+            <Autocomplete
               as={CustomInput}
+              ref={autocompleteRef}
               value={query}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setQuery(e.target.value)
@@ -71,7 +61,10 @@ const App = () => {
                       <div
                         className='dropdown-item'
                         key={prediction.place_id}
-                        onClick={() => handleClick(prediction)}
+                        onClick={() => {
+                          setPlaceId(prediction.place_id)
+                          autocompleteRef.current?.close()
+                        }}
                       >
                         <span>{prediction.description}</span>
                       </div>
@@ -80,6 +73,7 @@ const App = () => {
                 )
               }}
             />
+            <Places.FindPlaceByPlaceId placeId={placeId} onPlaceReceived={(place) => {console.log(place?.geometry?.location?.toJSON())}} />
           </Places>
         </div>
         <Map id='map' options={options}>

@@ -1,33 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState, useImperativeHandle, forwardRef } from 'react'
 import { useGoogleMaps } from '../GoogleMapsContext'
-
-/**
- * Context for Autocomplete component.
- */
-const AutocompleteContext = React.createContext<{
-  autoComplete: google.maps.places.AutocompleteService | null
-}>({
-  autoComplete: null
-})
-
-export function useAutocomplete() {
-  return React.useContext(AutocompleteContext)
-}
-
-export type AutocompleteInputProps = Omit<
-  React.HTMLProps<HTMLInputElement>,
-  'as'
->
-
-interface AutoCompleteProps extends AutocompleteInputProps {
-  as?: React.ElementType | string
-  onLoaded?: (autocomplete: google.maps.places.AutocompleteService) => void
-  options?: Omit<google.maps.places.AutocompletionRequest, 'input'>
-  renderResult?: (
-    predictions: google.maps.places.AutocompletePrediction[]
-  ) => React.ReactNode
-  children?: React.ReactNode
-}
 
 /**
  * Autocomplete component for Google Maps Places API.
@@ -35,15 +7,34 @@ interface AutoCompleteProps extends AutocompleteInputProps {
  * @component
  * @returns {React.ReactNode} The Autocomplete component.
  */
-export function Autocomplete({
+
+
+type AutocompleteInputProps = Omit<
+  React.HTMLProps<HTMLInputElement>,
+  'as'
+>
+
+interface AutocompleteProps extends AutocompleteInputProps {
+  as?: React.ElementType | string
+  onLoaded?: (autocomplete: google.maps.places.AutocompleteService) => void
+  options?: Omit<google.maps.places.AutocompletionRequest, 'input'>
+  renderResult?: (
+    predictions: google.maps.places.AutocompletePrediction[]
+  ) => React.ReactNode
+}
+
+export interface AutocompleteRef {
+  close: () => void
+}
+
+export const Autocomplete = forwardRef<AutocompleteRef, AutocompleteProps>(({
   as: Component = 'input',
   onLoaded,
   options,
   renderResult,
-  children,
   value,
   ...rest
-}: AutoCompleteProps) {
+}: AutocompleteProps, ref) => {
   const { scriptLoaded } = useGoogleMaps()
   const autoComplete = useRef<google.maps.places.AutocompleteService | null>(
     null
@@ -80,17 +71,20 @@ export function Autocomplete({
     if (autoComplete.current && onLoaded) {
       onLoaded(autoComplete.current)
     }
-  } , [autoComplete.current, onLoaded])
+  }, [autoComplete.current, onLoaded])
+
+  useImperativeHandle(ref, () => ({
+    close: () => {
+      setPredictions([])
+    }
+  }))
 
   return (
-    <AutocompleteContext.Provider
-      value={{ autoComplete: autoComplete.current }}
-    >
+    <React.Fragment>
       <Component value={value} {...rest} />
       {predictions.length > 0 && renderResult
         ? renderResult(predictions)
         : null}
-      {children}
-    </AutocompleteContext.Provider>
+    </React.Fragment>
   )
-}
+})
