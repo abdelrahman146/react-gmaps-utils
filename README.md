@@ -14,6 +14,7 @@ You can install react-gmaps-utils using npm:
 
 ```bash
 npm install react-gmaps-utils
+npm install --save-dev @types/google.maps
 ```
 
 ## Usage

@@ -17,10 +17,11 @@ export function useAutocomplete() {
 
 export type AutocompleteInputProps = Omit<
   React.HTMLProps<HTMLInputElement>,
-  'onChange' | 'value'
+  'as'
 >
 
 interface AutoCompleteProps extends AutocompleteInputProps {
+  as?: React.ElementType | string;
   options?: Omit<google.maps.places.AutocompletionRequest, 'input'>
   onItemClick?: (prediction: google.maps.places.PlaceResult) => void
   renderResult?: (
@@ -34,18 +35,23 @@ interface AutoCompleteProps extends AutocompleteInputProps {
  * Autocomplete component for Google Maps Places API.
  *
  * @component
- * @param {AutoCompleteProps} props - The props for the Autocomplete component.
- * @param {Array} props.options - Additional options for the Autocomplete component.
- * @param {ReactNode} props.children - The child elements of the Autocomplete component.
- * @param {Function} props.renderResult - The function to render the autocomplete results.
- * @param {Function} props.onItemClick - The function to handle the click event on an autocomplete result.
- * @returns {JSX.Element} The Autocomplete component.
+ * @param {Object} props - The component props.
+ * @param {React.ElementType} [props.as='input'] - The component to render as.
+ * @param {Object} [props.options] - Additional options for the Autocomplete service.
+ * @param {React.ReactNode} [props.children] - The child elements to render.
+ * @param {Function} [props.renderResult] - The function to render the autocomplete results.
+ * @param {Function} [props.onItemClick] - The function to handle when an item is clicked.
+ * @param {string} props.value - The current value of the autocomplete input.
+ * @param {any} rest - Additional props to pass to the rendered component.
+ * @returns {React.ReactNode} The Autocomplete component.
  */
 export function Autocomplete({
+  as: Component = 'input',
   options,
   children,
   renderResult,
   onItemClick,
+  value,
   ...rest
 }: AutoCompleteProps) {
   const { scriptLoaded } = useGoogleMaps()
@@ -53,7 +59,6 @@ export function Autocomplete({
   const autoComplete = useRef<google.maps.places.AutocompleteService | null>(
     null
   )
-  const [query, setQuery] = useState('')
   const [predictions, setPredictions] = useState<
     google.maps.places.AutocompletePrediction[]
   >([])
@@ -78,10 +83,10 @@ export function Autocomplete({
   }, [scriptLoaded])
 
   useEffect(() => {
-    if (autoComplete.current && query !== '') {
+    if (autoComplete.current && value !== '') {
       autoComplete.current.getPlacePredictions(
         {
-          input: query,
+          input: String(value),
           ...options
         },
         (predictions) => {
@@ -93,17 +98,14 @@ export function Autocomplete({
     } else {
       setPredictions([])
     }
-  }, [query])
+  }, [value])
 
   return (
     <AutocompleteContext.Provider
       value={{ autoComplete: autoComplete.current }}
     >
-      <input
-        onChange={(e) => {
-          setQuery(e.target.value)
-        }}
-        value={query}
+      <Component
+        value={value}
         {...rest}
       />
       {predictions.length > 0 && renderResult
