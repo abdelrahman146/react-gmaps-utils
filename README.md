@@ -1,12 +1,10 @@
 # react-gmaps-utils
+
 [![npm package](https://img.shields.io/npm/v/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
 [![npm downloads](https://img.shields.io/npm/dt/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
 [![npm bundle size](https://img.shields.io/bundlephobia/min/react-gmaps-utils)](https://www.npmjs.com/package/react-gmaps-utils)
 
 react-gmaps-utils is a React library that provides components and hooks for integrating Google Maps functionality into your React applications.
-
-
-
 
 ## Installation
 
@@ -22,7 +20,6 @@ npm install --save-dev @types/google.maps
 ### GoogleMapsProvider
 
 The `GoogleMapsProvider` component is used to load the Google Maps script and provide a context for other components to access the Google Maps API.
-
 
 ```jsx
 import { GoogleMapsProvider } from 'react-gmaps-utils'
@@ -84,28 +81,48 @@ The `Autocomplete` component provides an input field with autocomplete functiona
 
 ```jsx
 import { Places, Autocomplete } from 'react-gmaps-utils'
+import { useMemo, useRef, useState } from 'react'
 
 function MyAutocomplete() {
+  const [query, setQuery] = useState('')
+  const autocompleteRef = useRef<{close: () => void}>(null)
+  const placesService = useRef<google.maps.places.PlacesService | null>(null)
+  const [placeId, setPlaceId] = useState<string | null>(null);
   return (
-    <Places>
+    <Places
+      onLoaded={(places) => {
+        placesService.current = places
+      }}
+    >
       <Autocomplete
-        options={{
-          types: ['geocode'],
-          componentRestrictions: { country: 'us' }
+        as={CustomInput}
+        ref={autocompleteRef}
+        value={query}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setQuery(e.target.value)
+        }
+        options={{ types: ['(cities)'] }}
+        className='input'
+        renderResult={(predictions) => {
+          return (
+            <div className='dropdown'>
+              {predictions.map((prediction) => (
+                <div
+                  className='dropdown-item'
+                  key={prediction.place_id}
+                  onClick={() => {
+                    setPlaceId(prediction.place_id)
+                    autocompleteRef.current?.close()
+                  }}
+                >
+                  <span>{prediction.description}</span>
+                </div>
+              ))}
+            </div>
+          )
         }}
-        renderResult={(predictions, handleClick) => (
-          <ul>
-            {predictions.map((prediction) => (
-              <li
-                key={prediction.place_id}
-                onClick={() => handleClick(prediction)}
-              >
-                {prediction.description}
-              </li>
-            ))}
-          </ul>
-        )}
       />
+      <Places.FindPlaceByPlaceId placeId={placeId} onPlaceReceived={(place) => {console.log(place?.geometry?.location?.toJSON())}} />
     </Places>
   )
 }

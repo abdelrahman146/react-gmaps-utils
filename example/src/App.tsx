@@ -22,8 +22,8 @@ const defaultPosition = { lat: 25.276987, lng: 55.296249 }
 const App = () => {
   console.log("app  rendered");
   const [query, setQuery] = useState('')
-  const placesService = useRef<google.maps.places.PlacesService | null>(null)
   const autocompleteRef = useRef<{close: () => void}>(null)
+  const placesService = useRef<google.maps.places.PlacesService | null>(null)
   const [placeId, setPlaceId] = useState<string | null>(null);
   const { position: currentPosition } = useCurrentPosition({
     defaultPosition: defaultPosition
