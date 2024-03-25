@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   GoogleMapsProvider,
@@ -8,32 +8,36 @@ import {
   Autocomplete
 } from 'react-gmaps-utils'
 
-const CustomInput: React.FC<React.HTMLProps<HTMLInputElement>> = ({
-  ...rest
-}) => {
+const CustomInput = forwardRef<HTMLInputElement, React.HTMLProps<HTMLInputElement>>((props, ref) => {
   return (
     <div className='Helloo' style={{ margin: 10 }}>
-      <input {...rest} />
+      <input ref={ref} {...props} />
     </div>
   )
-}
+})
 
 const defaultPosition = { lat: 25.276987, lng: 55.296249 }
 const App = () => {
   console.log("app  rendered");
   const [query, setQuery] = useState('')
-  const autocompleteRef = useRef<{close: () => void}>(null)
+  const autocompleteRef = useRef<{close: () => void, focus: () => void}>(null)
   const placesService = useRef<google.maps.places.PlacesService | null>(null)
   const [placeId, setPlaceId] = useState<string | null>(null);
   const { position: currentPosition } = useCurrentPosition({
-    defaultPosition: defaultPosition
+    getPositionOnInit: false
   })
   const options = useMemo(() => {
     return {
-      center: currentPosition || undefined,
+      center: currentPosition || defaultPosition,
       zoom: 15
     }
   }, [currentPosition]);
+  
+  useEffect(() => {
+    if(autocompleteRef.current){
+      autocompleteRef.current.focus();
+    }
+  }, [autocompleteRef.current]);
 
   return (
     <GoogleMapsProvider apiKey={import.meta.env.VITE_API_KEY}>
@@ -77,7 +81,7 @@ const App = () => {
           </Places>
         </div>
         <Map id='map' options={options}>
-          <Map.Marker position={currentPosition} />
+          <Map.Marker position={defaultPosition} />
         </Map>
       </div>
     </GoogleMapsProvider>

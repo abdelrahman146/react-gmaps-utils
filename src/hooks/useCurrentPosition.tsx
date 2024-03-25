@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 type Position = google.maps.LatLngLiteral;
 
 interface UseCurrentPositionOptions {
-  defaultPosition?: Position;
+  getPositionOnInit?: boolean;
 }
 
 /**
@@ -15,11 +15,12 @@ export const useCurrentPosition = (options: UseCurrentPositionOptions = {}) => {
   const [position, setPosition] = useState<Position | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const { getPositionOnInit = true } = options;
 
   const getCurrentPosition = () => {
     setLoading(true);
     setError(null);
-    const { defaultPosition } = options;
+    
 
     const handlePosition = (position: GeolocationPosition) => {
       const { latitude, longitude } = position.coords;
@@ -29,7 +30,7 @@ export const useCurrentPosition = (options: UseCurrentPositionOptions = {}) => {
 
     const handleError = (error: GeolocationPositionError) => {
       setError(error.message);
-      setPosition(defaultPosition || null);
+      setPosition(null);
       setLoading(false);
     };
 
@@ -48,7 +49,9 @@ export const useCurrentPosition = (options: UseCurrentPositionOptions = {}) => {
   };
 
   useEffect(() => {
-    getCurrentPosition();
+    if(getPositionOnInit) {
+      getCurrentPosition();
+    }
   }, []);
 
   return { position, loading, error, getCurrentPosition };

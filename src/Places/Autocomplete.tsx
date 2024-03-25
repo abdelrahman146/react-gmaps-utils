@@ -19,6 +19,7 @@ type AutocompleteProps<C extends ElementType = 'input'> = {
   as?: C
   onLoaded?: (autocomplete: google.maps.places.AutocompleteService) => void
   options?: Omit<google.maps.places.AutocompletionRequest, 'input'>
+  shouldFetch?: boolean
   renderResult?: (
     predictions: google.maps.places.AutocompletePrediction[]
   ) => React.ReactNode
@@ -26,6 +27,7 @@ type AutocompleteProps<C extends ElementType = 'input'> = {
 
 export interface AutocompleteRef {
   close: () => void
+  focus: () => void
 }
 
 export const Autocomplete = forwardRef(
@@ -35,12 +37,14 @@ export const Autocomplete = forwardRef(
       onLoaded,
       options,
       renderResult,
+      shouldFetch = true,
       value,
       ...rest
     }: AutocompleteProps<C>,
     ref: React.Ref<AutocompleteRef>
   ) => {
     const { scriptLoaded } = useGoogleMaps()
+    const componentRef = useRef<HTMLInputElement>(null);
     const autoComplete = useRef<google.maps.places.AutocompleteService | null>(
       null
     )
@@ -55,7 +59,7 @@ export const Autocomplete = forwardRef(
     }, [scriptLoaded])
 
     useEffect(() => {
-      if (autoComplete.current && value !== '') {
+      if (autoComplete.current && value !== '' && shouldFetch) {
         autoComplete.current.getPlacePredictions(
           {
             input: String(value),
@@ -81,12 +85,15 @@ export const Autocomplete = forwardRef(
     useImperativeHandle(ref, () => ({
       close: () => {
         setPredictions([])
+      },
+      focus: () => {
+        componentRef.current?.focus()
       }
     }))
 
     return (
       <React.Fragment>
-        <Component value={value} {...rest as any} />
+        <Component ref={componentRef} value={value} {...rest as any} />
         {predictions.length > 0 && renderResult
           ? renderResult(predictions)
           : null}
