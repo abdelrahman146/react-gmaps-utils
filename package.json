@@ -1,6 +1,6 @@
 {
   "name": "react-gmaps-utils",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "a React library that provides components and hooks for integrating Google Maps functionality into your React applications.",
   "keywords": [
     "react",
