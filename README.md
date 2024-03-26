@@ -128,6 +128,8 @@ function MyAutocomplete() {
 }
 ```
 
+The component also has `shouldFetch` which is a boolean that you can pass to prevent the autocomplete from fetching suggestions. example usecase could be if you want to make the fetch occurs only if there was a user interaction. 
+
 ### ReverseGeocodeByLocation
 
 The `ReverseGeocodeByLocation` component performs reverse geocoding based on a specified location.
