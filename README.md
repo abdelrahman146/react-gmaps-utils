@@ -180,7 +180,12 @@ The `useCurrentPosition` hook retrieves the current position of the user.
 import { useCurrentPosition } from 'react-gmaps-utils'
 
 function MyComponent() {
-  const { position, loading, error, getCurrentPosition } = useCurrentPosition()
+  const { position, loading, error, getCurrentPosition, getIPBasedPosition } = useCurrentPosition({
+    onInit: {
+      getPosition: true,
+      ipBased: true,
+    }
+  })
 
   if (loading) return <div>Loading...</div>
   if (error) return <div>Error: {error}</div>
@@ -191,7 +196,7 @@ function MyComponent() {
       <br />
       Longitude: {position?.lng}
       <br />
-      <button onClick={getCurrentPosition}>Get Current Position</button>
+      <button onClick={getCurrentPosition}>Get Exact Location</button>
     </div>
   )
 }
